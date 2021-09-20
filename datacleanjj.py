@@ -29,4 +29,7 @@ df_diff = pd.concat([df,df_old]).drop_duplicates(subset=['Restaurant'],keep=Fals
 df['new'] = df.Restaurant.isin(df_diff.Restaurant)
 df['new'] = df['new'].apply(lambda x: 1 if x == True else 0 )
 
+foodlist = ["치킨", "피자양식", "중식", "한식", "일식돈까스", "족발보쌈", "야식", "분식", "카페디저트", "편의점","프랜차이즈"]
+df['type'] = df['type'].apply(lambda x: foodlist.index(x))
+
 df.to_excel(r'data' + str(today) + '.xlsx', index=False, header=True)

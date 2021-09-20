@@ -6,7 +6,7 @@ import pandas as pd
 from datetime import date
 
 today = date.today()
-df = pd.DataFrame(columns=['Restaurant','Review','ReviewCount','Reply','type','minprice'])
+df = pd.DataFrame(columns=['Restaurant','Review','ReviewCount','Reply','type','minprice', 'cesco','indexingorder'])
 
 driver = webdriver.Chrome('/Users/mat_c/Downloads/chromedriver.exe')
 driver.get('https://www.yogiyo.co.kr/mobile')
@@ -53,22 +53,30 @@ while pointer < len(food_list):
     min_price = driver.find_elements_by_xpath('//li[@class="min-price ng-binding"]')
     
     delivery_fee = driver.find_elements_by_xpath('//div[@class=""]')
-       
-
+    
+    cesco = driver.find_elements_by_xpath('//li[@class="full-w"]')
+      #weirdly, some of the classes don't have cesco, so fill the rest with nonsense selenium objects 
+    cesco = cesco + [min_price][0]*(len(ratings_name) - len(cesco))
     for s in range(len(ratings_name)):
+        
         result = re.sub("[^\d\.\ ]", "", ratings_test[s].text) 
         temp_str = (ratings_name[s].text + " " + " ".join(result.split())).split()
         while len(temp_str) < 4:
             temp_str.insert(len(temp_str), 0)
         temp_str.insert(len(temp_str), food_list[pointer])
         temp_str.insert(len(temp_str), min_price[s].text)
-        temp_df = pd.DataFrame([temp_str], columns = ['Restaurant','Review','ReviewCount','Reply','type','minprice'])
+        if(len(cesco[s].text.split(' ')[2:]) == 1):
+            temp_str.insert(len(temp_str), 1)
+        else:
+            temp_str.insert(len(temp_str), 0)
+        temp_str.insert(len(temp_str), s)
+        temp_df = pd.DataFrame([temp_str], columns = ['Restaurant','Review','ReviewCount','Reply','type','minprice', 'cesco','indexingorder'])
         df = df.append(temp_df)
     print(food_list[pointer] + " completed")
     pointer = pointer + 1
     
 
-driver.close()
+#driver.close()
 
 df.to_excel(r''+str(today) + '.xlsx', index=False, header=True)
 
