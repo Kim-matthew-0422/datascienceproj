@@ -1,5 +1,5 @@
 # datascienceproj
-yogito project.
+yogiyo project.
 
 using selenium, pandas, and various data science methods using python.
 
