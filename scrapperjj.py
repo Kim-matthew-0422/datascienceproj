@@ -1,17 +1,25 @@
 from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
 import time
 import re
 import pandas as pd
 from datetime import date
-driver = webdriver.Chrome('/Users/mat_c/Downloads/chromedriver.exe')
 
-pointer = 0
 today = date.today()
-df = pd.DataFrame(columns=['Restaurant','Review','ReviewCount','Reply','type','min-price'])
-food_list = ["치킨", "피자양식", "중식", "한식", "일식돈까스", "족발보쌈", "야식", "분식", "카페디저트", "편의점"]
+df = pd.DataFrame(columns=['Restaurant','Review','ReviewCount','Reply','type','minprice'])
+
+driver = webdriver.Chrome('/Users/mat_c/Downloads/chromedriver.exe')
+driver.get('https://www.yogiyo.co.kr/mobile')
+search_bar = driver.find_elements_by_css_selector('input[placeholder="건물명, 도로명, 지번으로 검색하세요."')
+search_bar[0].clear()
+search_bar[0].send_keys("경기도 안성시 공도읍 용두리 752 주은풍림아파트")
+time.sleep(1)
+search_bar[0].send_keys(Keys.ENTER)
+url = driver.current_url
+pointer = 0
+food_list = ["치킨", "피자양식", "중식", "한식", "일식돈까스", "족발보쌈", "야식", "분식", "카페디저트", "편의점","프랜차이즈"]
 while pointer < len(food_list):
-    driver.get('https://www.yogiyo.co.kr/mobile/#/%EA%B2%BD%EA%B8%B0%EB%8F%84/456820/' + food_list[pointer])
-    
+    driver.get(url + food_list[pointer])
     loaded = driver.find_elements_by_xpath('//div[@class="restaurants-info"]')
     
     #Sometimes Yogiyo refuses to show information unless you refresh an unknown amount of time
@@ -54,13 +62,13 @@ while pointer < len(food_list):
             temp_str.insert(len(temp_str), 0)
         temp_str.insert(len(temp_str), food_list[pointer])
         temp_str.insert(len(temp_str), min_price[s].text)
-        temp_df = pd.DataFrame([temp_str], columns = ['Restaurant','Review','ReviewCount','Reply','type','min-price'])
+        temp_df = pd.DataFrame([temp_str], columns = ['Restaurant','Review','ReviewCount','Reply','type','minprice'])
         df = df.append(temp_df)
     print(food_list[pointer] + " completed")
     pointer = pointer + 1
     
 
+driver.close()
 
-
-df.to_excel(r'C:\Users\mat_c\Documents\datascienceproj\\' + str(today) +'.xlsx', index=False, header=True)
+df.to_excel(r''+str(today) + '.xlsx', index=False, header=True)
 
