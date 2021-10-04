@@ -6,12 +6,14 @@ import pandas as pd
 from datetime import date
 
 today = date.today()
+#categories
 df = pd.DataFrame(columns=['Restaurant','Review','ReviewCount','Reply','type','minprice', 'cesco','indexingorder'])
 
 driver = webdriver.Chrome('/Users/mat_c/Downloads/chromedriver.exe')
 driver.get('https://www.yogiyo.co.kr/mobile')
 search_bar = driver.find_elements_by_css_selector('input[placeholder="건물명, 도로명, 지번으로 검색하세요."')
 search_bar[0].clear()
+#use my current location
 search_bar[0].send_keys("경기도 안성시 공도읍 용두리 752 주은풍림아파트")
 time.sleep(1)
 search_bar[0].send_keys(Keys.ENTER)
@@ -76,7 +78,7 @@ while pointer < len(food_list):
     pointer = pointer + 1
     
 
-#driver.close()
-
+driver.close()
+#save to excel using today's date.
 df.to_excel(r''+str(today) + '.xlsx', index=False, header=True)
 
